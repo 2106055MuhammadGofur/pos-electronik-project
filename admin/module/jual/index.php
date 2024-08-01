@@ -1,8 +1,8 @@
 <!--sidebar end-->
 
-<!-- **********************************************************************************************************************************************************
+<!-- ****************************************************
 	  MAIN CONTENT
-	  *********************************************************************************************************************************************************** -->
+	  ***************************************************** -->
 <!--main content start-->
 <?php
 $id = $_SESSION['admin']['id_member'];
@@ -58,21 +58,25 @@ $hasil = $lihat->member_edit($id);
 			</div>
 			<div class="card-body">
 				<!-- Tambahkan form baru untuk menambah penjualan -->
-				<form method="POST" action="fungsi/tambah/tambah.php?penjualan=tambah">
+				<form id="penjualanForm" method="POST" action="fungsi/tambah/tambah.php?penjualan=tambah">
 					<div class="form-row">
 						<div class="form-group col-md-3">
 							<label for="nama_barang">Nama Barang</label>
 							<select class="form-control" id="nama_barang" name="nama_barang" required>
 								<option value="">Pilih Barang</option>
 								<?php
-								$sql_barang = "SELECT id_barang, nama_barang FROM barang ORDER BY nama_barang ASC";
+								$sql_barang = "SELECT id_barang, nama_barang, stok FROM barang ORDER BY nama_barang ASC";
 								$row_barang = $config->prepare($sql_barang);
 								$row_barang->execute();
 								while ($barang = $row_barang->fetch(PDO::FETCH_ASSOC)) {
-									echo "<option value='" . $barang['id_barang'] . "'>" . $barang['nama_barang'] . "</option>";
+									echo "<option value='" . $barang['id_barang'] . "' data-stok='" . $barang['stok'] . "'>" . $barang['nama_barang'] . "</option>";
 								}
 								?>
 							</select>
+						</div>
+						<div class="form-group col-md-3">
+							<label for="stok_akhir">Stok Akhir</label>
+							<input type="text" class="form-control" id="stok_akhir" name="stok_akhir" readonly>
 						</div>
 						<div class="form-group col-md-3">
 							<label for="jumlah">Jumlah</label>
@@ -84,6 +88,44 @@ $hasil = $lihat->member_edit($id);
 						</div>
 					</div>
 				</form>
+
+				<!-- Modal -->
+				<div class="modal fade" id="stokModal" tabindex="-1" role="dialog" aria-labelledby="stokModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="stokModalLabel">Peringatan</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								Jumlah melebihi stok akhir!
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<script>
+					document.getElementById('nama_barang').addEventListener('change', function () {
+						var stok = this.options[this.selectedIndex].getAttribute('data-stok');
+						document.getElementById('stok_akhir').value = stok;
+					});
+
+					document.getElementById('penjualanForm').addEventListener('submit', function (event) {
+						var stokAkhir = parseInt(document.getElementById('stok_akhir').value);
+						var jumlah = parseInt(document.getElementById('jumlah').value);
+
+						if (jumlah > stokAkhir) {
+							event.preventDefault(); // Mencegah form dikirim
+							$('#stokModal').modal('show'); // Menampilkan modal Bootstrap
+						}
+					});
+				</script>
 				<!-- Akhir form baru -->
 				<div class="card-body">
 					<div id="keranjang" class="table-responsive">
@@ -100,6 +142,7 @@ $hasil = $lihat->member_edit($id);
 									<td> No</td>
 									<td> Nama Barang</td>
 									<td style="width:10%;"> Jumlah</td>
+									<td style="width:10%;"> Stok Akhir</td>
 									<td style="width:20%;"> Total</td>
 									<td> Kasir</td>
 									<td> Aksi</td>
@@ -123,10 +166,20 @@ $hasil = $lihat->member_edit($id);
 												<input type="hidden" name="id_barang"
 													value="<?php echo $isi['id_barang']; ?>" class="form-control">
 										</td>
+										<td style="width:10%;">
+											<?php
+											// Panggil stok akhir dari database
+											$sql_stok = "SELECT stok FROM barang WHERE id_barang = ?";
+											$row_stok = $config->prepare($sql_stok);
+											$row_stok->execute(array($isi['id_barang']));
+											$stok_akhir = $row_stok->fetch(PDO::FETCH_ASSOC)['stok'];
+											echo $stok_akhir;
+											?>
+										</td>
 										<td>Rp.<?php echo number_format($isi['total']); ?>,-</td>
 										<td><?php echo $isi['nm_member']; ?></td>
 										<td>
-											<button type="submit" class="btn btn-warning">Update</button>
+											<button type="submit" class="btn btn-warning">Update Jumlah</button>
 											</form>
 											<!-- aksi ke table penjualan -->
 											<a href="fungsi/hapus/hapus.php?jual=jual&id=<?php echo $isi['id_penjualan']; ?>&brg=<?php echo $isi['id_barang']; ?>
@@ -186,15 +239,17 @@ $hasil = $lihat->member_edit($id);
 														<div class="modal-content">
 															<div class="modal-header">
 																<h5 class="modal-title" id="successModalLabel">Pembayaran Berhasil</h5>
-																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-																	<span aria-hidden="true">&times;</span>
-																</button>
 															</div>
 															<div class="modal-body">
 																Belanjaan Berhasil Di Bayar!
 															</div>
 															<div class="modal-footer">
-																<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+																<a href="print.php?nm_member=' . $_SESSION['admin']['nm_member'] . '&bayar=' . $bayar . '&kembali=' . $hitung . '&total=' . $total_bayar . '" target="_blank" class="btn btn-secondary">
+																	<i class="fa fa-print"></i> Print Untuk Bukti Pembayaran
+																</a>
+																<a href="fungsi/hapus/hapus.php?penjualan=jual" class="btn btn-danger">
+																	<i class="fa fa-refresh"></i> Reset Pembayaran
+																</a>
 															</div>
 														</div>
 													</div>
@@ -240,7 +295,8 @@ $hasil = $lihat->member_edit($id);
 										<input type="hidden" name="id_member[]" value="<?php echo $isi['id_member']; ?>">
 										<input type="hidden" name="jumlah[]" value="<?php echo $isi['jumlah']; ?>">
 										<input type="hidden" name="total1[]" value="<?php echo $isi['total']; ?>">
-										<input type="hidden" name="tgl_input[]" value="<?php echo $isi['tanggal_input']; ?>">
+										<input type="hidden" name="tgl_input[]"
+											value="<?php echo $isi['tanggal_input']; ?>">
 										<input type="hidden" name="periode[]" value="<?php echo date('m-Y'); ?>">
 										<?php $no++;
 									} ?>
@@ -252,25 +308,22 @@ $hasil = $lihat->member_edit($id);
 										<td>Bayar </td>
 										<td><input type="text" class="form-control" name="bayar"
 												value="<?php echo $bayar; ?>"></td>
-										<td><button class="btn btn-success"><i class="fa fa-shopping-cart"></i>
-												Bayar</button>
-											<?php if (!empty($_GET['nota'] == 'yes')) { ?>
-												<a class="btn btn-danger" href="fungsi/hapus/hapus.php?penjualan=jual">
-													<b>RESET</b></a>
+										<td><button class="btn btn-success" id="btnBayar" disabled><i
+													class="fa fa-shopping-cart"></i> Bayar</button></td>
+										<?php if (!empty($_GET['nota'] == 'yes')) { ?>
 											</td><?php } ?></td>
 									</tr>
 								</form>
 								<!-- aksi ke table nota -->
 								<tr>
-									<td>Kembali</td>
+									<td>Kembalian</td>
 									<td><input type="text" class="form-control" value="<?php echo $hitung; ?>"></td>
 									<td></td>
 									<td>
 										<a href="print.php?nm_member=<?php echo $_SESSION['admin']['nm_member']; ?>
-									&bayar=<?php echo $bayar; ?>&kembali=<?php echo $hitung; ?>" target="_blank">
-											<button class="btn btn-secondary">
-												<i class="fa fa-print"></i> Print Untuk Bukti Pembayaran
-											</button></a>
+									&bayar=<?php echo $bayar; ?>&kembali=<?php echo $hitung; ?>&total=<?php echo $total_bayar; ?>"
+											target="_blank">
+
 									</td>
 								</tr>
 							</table>
@@ -306,8 +359,19 @@ $hasil = $lihat->member_edit($id);
 			//To select country name
 		</script>
 
+		<script>
+			$(document).ready(function () {
+				// Mengaktifkan/menonaktifkan tombol bayar berdasarkan input bayar
+				$('input[name="bayar"]').on('input', function () {
+					var bayarValue = $(this).val();
+					$('#btnBayar').prop('disabled', !bayarValue); // Nonaktifkan jika kosong
+				});
+			});
+		</script>
+
 		<!-- Modal -->
-		<div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel" aria-hidden="true">
+		<div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel"
+			aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
