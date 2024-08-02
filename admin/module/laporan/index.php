@@ -326,12 +326,10 @@ function openDeleteConfirmModal(idNota) {
         var adminCode = document.getElementById('deleteAdminCode').value;
         if (adminCode === 'admin') { // Ganti 'admin' dengan kode admin yang benar
             $('#deleteConfirmModal').modal('hide');
-            $('#deleteModal').modal('show');
-            document.getElementById('deleteId').value = idNota;
+            // Redirect to delete script
+            window.location.href = 'fungsi/hapus/hapus.php?laporan=jual&id=' + idNota;
         } else {
-            $('#deleteConfirmModal').modal('hide');
-            $('#alertModal').modal('show');
-            document.getElementById('alertMessage').innerText = 'Kode admin salah. Penghapusan dibatalkan.';
+            alert('Kode admin salah. Penghapusan dibatalkan.');
         }
     };
 }

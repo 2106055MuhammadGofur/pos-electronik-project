@@ -148,7 +148,6 @@
 								<th style="width:10%;"> Total</th>
 								<th> Kasir</th>
 								<th> Tanggal Input</th>
-								<th> Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -188,10 +187,7 @@
 								<td>Rp.<?php echo number_format($isi['total']);?>,-</td>
 								<td><?php echo $isi['nm_member'];?></td>
 								<td><?php echo $isi['tanggal_input'];?></td>
-								<td>
-									<button onclick="openEditModal('<?php echo $isi['id_nota'];?>', '<?php echo $isi['id_barang'];?>', '<?php echo $isi['jumlah'];?>', '<?php echo $isi['jumlah'];?>')" class="btn btn-warning btn-sm">Edit</button>
-									<button onclick="confirmDelete(<?php echo $isi['id_nota'];?>)" class="btn btn-danger btn-sm">Hapus</button>
-								</td>
+								
 							</tr>
 							<?php $no++; }?>
 						</tbody>
