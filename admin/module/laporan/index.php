@@ -190,7 +190,7 @@
 								<td><?php echo $isi['tanggal_input'];?></td>
 								<td>
 									<button onclick="openEditModal('<?php echo $isi['id_nota'];?>', '<?php echo $isi['id_barang'];?>', '<?php echo $isi['jumlah'];?>', '<?php echo $isi['jumlah'];?>')" class="btn btn-warning btn-sm">Edit</button>
-									<button onclick="confirmDelete(<?php echo $isi['id_nota'];?>)" class="btn btn-danger btn-sm">Hapus</button>
+									<button onclick="openDeleteConfirmModal('<?php echo $isi['id_nota'];?>')" class="btn btn-danger btn-sm">Hapus</button>
 								</td>
 							</tr>
 							<?php $no++; }?>
@@ -246,7 +246,7 @@ if(isset($_SESSION['error'])) {
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button type="button" class="close" data-dismiss="modal">Tutup</button>
           <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </div>
       </form>
@@ -254,32 +254,85 @@ if(isset($_SESSION['error'])) {
   </div>
 </div>
 
-<script>
-function confirmDelete(id) {
-    var adminCode = prompt("Masukkan kode admin untuk menghapus:");
-    if (adminCode != null && adminCode != "") {
-        if (adminCode === 'admin') {
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                window.location.href = 'fungsi/hapus/hapus.php?laporan=jual&id=' + id;
-            }
-        } else {
-            alert('Kode admin salah. Penghapusan dibatalkan.');
-        }
-    }
-}
+<!-- Modal Edit Confirmation -->
+<div class="modal fade" id="editConfirmModal" tabindex="-1" role="dialog" aria-labelledby="editConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editConfirmModalLabel">Konfirmasi Kode Admin</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="editAdminCode">Masukkan Kode Admin</label>
+          <input type="password" class="form-control" id="editAdminCode" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-primary" id="confirmEditButton">Konfirmasi</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Modal Delete Confirmation -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">Konfirmasi Hapus</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Masukkan kode admin untuk menghapus:</p>
+        <input type="password" id="deleteAdminCode" class="form-control">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
 function openEditModal(idNota, idBarang, jumlah, jumlahLama) {
-    var adminCode = prompt("Masukkan kode admin untuk mengedit:");
-    if (adminCode != null && adminCode != "") {
-        if (adminCode === 'admin') {
+    $('#editConfirmModal').modal('show');
+    document.getElementById('confirmEditButton').onclick = function() {
+        var adminCode = document.getElementById('editAdminCode').value;
+        if (adminCode === 'admin') { // Ganti 'admin' dengan kode admin yang benar
+            $('#editConfirmModal').modal('hide');
+            $('#editModal').modal('show');
             document.getElementById('editId').value = idNota;
             document.getElementById('editIdBarang').value = idBarang;
             document.getElementById('editJumlah').value = jumlah;
             document.getElementById('editJumlahLama').value = jumlahLama;
-            $('#editModal').modal('show');
         } else {
-            alert('Kode admin salah. Pengeditan dibatalkan.');
+            $('#editConfirmModal').modal('hide');
+            $('#alertModal').modal('show');
+            document.getElementById('alertMessage').innerText = 'Kode admin salah. Pengeditan dibatalkan.';
         }
-    }
+    };
+}
+
+function openDeleteConfirmModal(idNota) {
+    $('#deleteConfirmModal').modal('show');
+    document.getElementById('confirmDeleteButton').onclick = function() {
+        var adminCode = document.getElementById('deleteAdminCode').value;
+        if (adminCode === 'admin') { // Ganti 'admin' dengan kode admin yang benar
+            $('#deleteConfirmModal').modal('hide');
+            $('#deleteModal').modal('show');
+            document.getElementById('deleteId').value = idNota;
+        } else {
+            $('#deleteConfirmModal').modal('hide');
+            $('#alertModal').modal('show');
+            document.getElementById('alertMessage').innerText = 'Kode admin salah. Penghapusan dibatalkan.';
+        }
+    };
 }
 </script>
