@@ -146,6 +146,7 @@
 								<th style="width:10%;"> Jumlah</th>
 								<th style="width:10%;"> Modal</th>
 								<th style="width:10%;"> Total</th>
+								<th> Metode Pembayaran</th>
 								<th> Kasir</th>
 								<th> Tanggal Input</th>
 								<th> Aksi</th>
@@ -186,6 +187,7 @@
 								<td><?php echo $isi['jumlah'];?> </td>
 								<td>Rp.<?php echo number_format($isi['harga_beli']* $isi['jumlah']);?>,-</td>
 								<td>Rp.<?php echo number_format($isi['total']);?>,-</td>
+								<td>Metode Pembayaran</td>
 								<td><?php echo $isi['nm_member'];?></td>
 								<td><?php echo $isi['tanggal_input'];?></td>
 								<td>

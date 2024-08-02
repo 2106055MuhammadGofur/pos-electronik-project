@@ -314,7 +314,7 @@ $hasil = $lihat->member_edit($id);
 											<select class="form-control" name="metode_pembayaran" required>
 												<option value="">Pilih Metode Pembayaran</option>
 												<option value="cash">Cash</option>
-												<option value="qr_code">QR Kode</option>
+												<option value="non_cash">Non-Cash</option>
 											</select>
 										</td>
 										<td>
