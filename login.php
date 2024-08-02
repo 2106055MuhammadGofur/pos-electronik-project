@@ -60,7 +60,8 @@
                         <!-- Nested Row within Card Body -->
 						<div class="p-5">
 							<div class="text-center">
-								<h4 class="h4 text-gray-900 mb-4"><b>Point Of sale</b></h4>
+								<h4 class="h4 text-gray-900 mb-4"><b>Point of Sales</b></h4>
+								<img src="assets/img/logo_login.png" alt="Logo" class="mb-4" width="150" height="auto">
 							</div>
 							<?php if(isset($loginError) && $loginError): ?>
 								<div class="alert alert-danger" role="alert">

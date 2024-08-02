@@ -76,9 +76,8 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="fungsi/hapus/hapus.php?kategori=hapus&id=<?php echo $isi['id_kategori'];?>"
-                            onclick="javascript:return confirm('Hapus Data Kategori ?');"><button
-                                class="btn btn-danger">Hapus</button></a>
+                        <!-- Tombol Hapus dengan pemicu modal -->
+                        <button class="btn btn-danger" onclick="confirmDelete(<?= $isi['id_kategori']; ?>)">Hapus</button>
                     </td>
                 </tr>
                 <?php $no++; }?>
@@ -108,3 +107,31 @@
         </div>
     </div>
 </div>
+<!-- Modal untuk Hapus -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus kategori ini?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Hapus</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function confirmDelete(id) {
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'), {});
+    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    confirmDeleteBtn.href = 'fungsi/hapus/hapus.php?kategori=hapus&id=' + id;
+    deleteModal.show();
+}
+</script>
