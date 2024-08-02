@@ -306,12 +306,21 @@ $hasil = $lihat->member_edit($id);
 												value="<?php echo $total_bayar; ?>"></td>
 
 										<td>Bayar </td>
-										<td><input type="text" class="form-control" name="bayar"
-												value="<?php echo $bayar; ?>"></td>
-										<td><button class="btn btn-success" id="btnBayar" disabled><i
-													class="fa fa-shopping-cart"></i> Bayar</button></td>
-										<?php if (!empty($_GET['nota'] == 'yes')) { ?>
-											</td><?php } ?></td>
+										<td>
+											<input type="text" class="form-control" name="bayar"
+												value="<?php echo $bayar; ?>">
+										</td>
+										<td>
+											<select class="form-control" name="metode_pembayaran" required>
+												<option value="">Pilih Metode Pembayaran</option>
+												<option value="cash">Cash</option>
+												<option value="qr_code">QR Kode</option>
+											</select>
+										</td>
+										<td>
+											<button class="btn btn-success" id="btnBayar" disabled><i
+													class="fa fa-shopping-cart"></i> Bayar</button>
+										</td>
 									</tr>
 								</form>
 								<!-- aksi ke table nota -->
