@@ -329,7 +329,9 @@ function openDeleteConfirmModal(idNota) {
             // Redirect to delete script
             window.location.href = 'fungsi/hapus/hapus.php?laporan=jual&id=' + idNota;
         } else {
-            alert('Kode admin salah. Penghapusan dibatalkan.');
+            $('#deleteConfirmModal').modal('hide');
+            $('#alertModal').modal('show');
+            document.getElementById('alertMessage').innerText = 'Kode admin salah. Penghapusan dibatalkan.';
         }
     };
 }

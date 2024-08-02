@@ -117,12 +117,27 @@ $hasil = $lihat->member_edit($id);
 					});
 
 					document.getElementById('penjualanForm').addEventListener('submit', function (event) {
+						event.preventDefault(); // Mencegah form dikirim secara default
 						var stokAkhir = parseInt(document.getElementById('stok_akhir').value);
 						var jumlah = parseInt(document.getElementById('jumlah').value);
 
 						if (jumlah > stokAkhir) {
-							event.preventDefault(); // Mencegah form dikirim
 							$('#stokModal').modal('show'); // Menampilkan modal Bootstrap
+						} else {
+							// Kirim form menggunakan AJAX
+							var formData = new FormData(this);
+							fetch(this.action, {
+								method: 'POST',
+								body: formData
+							})
+							.then(response => response.text())
+							.then(data => {
+								// Refresh halaman atau update tampilan keranjang
+								location.reload();
+							})
+							.catch(error => {
+								console.error('Error:', error);
+							});
 						}
 					});
 				</script>

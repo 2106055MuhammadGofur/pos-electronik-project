@@ -17,14 +17,20 @@ if(!empty($_GET['laporan'])){
     $jumlah = $_POST['jumlah'];
     $jumlah_lama = $_POST['jumlah_lama'];
 
-    // Logging untuk debugging
-    error_log("Editing laporan: ID_Nota=$id_nota, ID_Barang=$id_barang, Jumlah=$jumlah, Jumlah_Lama=$jumlah_lama");
+    // Ambil harga jual dari database
+    $sql_harga = "SELECT harga_jual FROM barang WHERE id_barang=?";
+    $stmt_harga = $config->prepare($sql_harga);
+    $stmt_harga->execute(array($id_barang));
+    $harga_jual = $stmt_harga->fetchColumn();
+
+    // Hitung total harga baru
+    $total_harga = $jumlah * $harga_jual;
 
     try {
         // Update tabel nota
-        $sql_nota = "UPDATE nota SET jumlah=? WHERE id_nota=? AND id_barang=?";
+        $sql_nota = "UPDATE nota SET jumlah=?, total=? WHERE id_nota=? AND id_barang=?";
         $row_nota = $config->prepare($sql_nota);
-        $row_nota->execute(array($jumlah, $id_nota, $id_barang));
+        $row_nota->execute(array($jumlah, $total_harga, $id_nota, $id_barang));
 
         // Update tabel barang
         $sql_barang = "UPDATE barang SET stok=stok+? WHERE id_barang=?";
